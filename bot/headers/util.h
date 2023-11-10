@@ -11,10 +11,10 @@ int util_strcpy(char *dst, const char *src);
 
 int util_atoi(const char *str);
 int util_memsearch(const char *buf, size_t buf_len, const char *mem, size_t mem_len);
-int *util_stristr(char *haystack, char *needle);
+int util_stristr(unsigned char *haystack, size_t haystack_len, unsigned char *str, size_t str_len);
 
 char *util_itoa(int num, char *str, int base);
-char *util_fdgets(char *buffer, int buffer_size, int fd);
+unsigned char *util_fdgets(unsigned char *buffer, int buffer_size, int fd);
 
 void util_strcat(char *, char *);
 void *util_zero(void *buf, size_t len);

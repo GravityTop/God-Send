@@ -169,32 +169,32 @@ int util_memsearch(const char *buf, size_t buf_len, const char *mem, size_t mem_
 }
 
 /* fuck const here nig */
-int *util_stristr(char *haystack, char *needle) {
-    char *ptr = haystack;
-    int haystack_len = util_strlen(haystack);
-    int needle_len = util_strlen(needle);
-    int match_count = 0;
+int util_stristr(unsigned char *haystack, size_t haystack_len, unsigned char *str, size_t str_len)
+{
+    unsigned char *ptr = haystack;
+    size_t match_count = 0;
 
-    while (haystack_len-- > 0)
+    while(haystack_len-- > 0)
     {
-        char a = *ptr++;
-        char b = needle[match_count];
+        unsigned char a = *ptr++;
+        unsigned char b = str[match_count];
         a = a >= 'A' && a <= 'Z' ? a | 0x60 : a;
         b = b >= 'A' && b <= 'Z' ? b | 0x60 : b;
 
-        if (a == b)
+        if(a == b)
         {
-            if (++match_count == needle_len)
-                return (int *)(ptr - needle);
+            if(++match_count == str_len)
+                return (ptr - haystack);
         }
         else
             match_count = 0;
     }
 
-    return NULL;
+    return -1;
 }
 
-char *util_fdgets(char *buffer, int buffer_size, int fd)
+
+unsigned char *util_fdgets(unsigned char *buffer, int buffer_size, int fd)
 {
     int got = 0, total = 0;
     do 
