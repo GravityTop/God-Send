@@ -10,13 +10,13 @@ import (
 const DatabaseAddr string   = "127.0.0.1:3306"
 const DatabaseUser string   = "root"
 const DatabasePass string   = "GodSend#21"
-const DatabaseTable string  = "vagner"
+const DatabaseTable string  = "God"
 
 var clientList *ClientList = NewClientList()
 var database *Database = NewDatabase(DatabaseAddr, DatabaseUser, DatabasePass, DatabaseTable)
 
 func main() {
-    tel, err := net.Listen("tcp", ":1337")
+    tel, err := net.Listen("tcp", "84.54.51.227:1337")
     if err != nil {
         fmt.Println(err)
         return
