@@ -1,0 +1,2 @@
+-DDEBUG for no daemonizing
+-DDEBUG_scn for scanner propositions
